@@ -1,15 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    async redirects() {
-      return [
-        {
-          source: '/',
-          destination: '/forms',
-          permanent: true,
-        },
-      ]
-    },
+  basePath: '',
+  experimental: {
+    appDir: true
   }
-  
-  module.exports = nextConfig
-  
+}
+
+module.exports = nextConfig
