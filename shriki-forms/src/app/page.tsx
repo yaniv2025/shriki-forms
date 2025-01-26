@@ -1,101 +1,253 @@
-import Image from "next/image";
+"use client"
+import React, { useState, useRef } from 'react';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+const DeliveryForm = () => {
+ const [selectedId, setSelectedId] = useState("");
+ const [formData, setFormData] = useState({
+   handoverDate: "",
+   approvalDate: "",
+   address: ""
+ });
+ const canvasRef = useRef(null);
+ const [isDrawing, setIsDrawing] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+ const apartments = [
+   { id: "16", floor: "0", building: "7", contract: "2023-06-14", buyer1: { name: "אחיה יחיאל", id: "326352655" }, size: "123.95" },
+   { id: "12", floor: "-1", building: "7", contract: "2023-07-16", buyer1: { name: "ניצן שמר", id: "213564040" }, size: "123.95" },
+   { id: "13", floor: "0", building: "7", contract: "2023-08-08", buyer1: { name: "מיכאל בירן", id: "322631300" }, size: "106.55" },
+   { id: "19", floor: "1", building: "7", contract: "2023-10-19", buyer1: { name: "עידן שי", id: "37968922" }, buyer2: { name: "איילת שי", id: "305300154" }, size: "109.93" },
+   { id: "20", floor: "1", building: "7", contract: "2023-12-31", buyer1: { name: "שמשון סולימן", id: "52268489" }, size: "109.73" },
+   { id: "18", floor: "1", building: "7", contract: "2024-05-09", buyer1: { name: "שלום ערקי", id: "52808060" }, size: "123.51" },
+   { id: "14", floor: "0", building: "7", contract: "2024-09-24", buyer1: { name: "שמואליאן יסכה", id: "213292873" }, buyer2: { name: "כץ יהודה", id: "206995219" }, size: "124.72" },
+   { id: "17", floor: "1", building: "7", contract: "2024-09-24", buyer1: { name: "גוטמן ענבל", id: "207828922" }, buyer2: { name: "גוטמן עמית יהונתן", id: "211768122" }, size: "123.25" },
+   { id: "11", floor: "-1", building: "7", contract: "2024-10-10", buyer1: { name: "טל שחר מתניה", id: "39119029" }, size: "124.15" },
+   { id: "1", floor: "-4", building: "7", contract: "2024-12-09", buyer1: { name: "י.ש אזמרה יזמות בע\"מ", id: "515770824" }, size: "158.12" },
+   { id: "2", floor: "-4", building: "7", contract: "2024-12-09", buyer1: { name: "י.ש אזמרה יזמות בע\"מ", id: "515770824" }, size: "135.17" },
+   { id: "3", floor: "-4", building: "7", contract: "2024-12-09", buyer1: { name: "י.ש אזמרה יזמות בע\"מ", id: "515770824" }, size: "134.98" },
+   { id: "4", floor: "-4", building: "7", contract: "2024-12-09", buyer1: { name: "י.ש אזמרה יזמות בע\"מ", id: "515770824" }, size: "157.89" },
+   { id: "22", floor: "2", building: "7", contract: "2024-12-16", buyer1: { name: "כהן יהודה", id: "34467803" }, size: "109.35" }
+ ];
+
+ const selectedApartment = apartments.find(apt => apt.id === selectedId);
+
+ const handleStartDrawing = (e) => {
+   setIsDrawing(true);
+   const canvas = canvasRef.current;
+   if (!canvas) return;
+   const ctx = canvas.getContext('2d');
+   ctx.beginPath();
+   const rect = canvas.getBoundingClientRect();
+   const x = e.type.includes('touch') ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+   const y = e.type.includes('touch') ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+   ctx.moveTo(x, y);
+ };
+
+ const handleDrawing = (e) => {
+   if (!isDrawing) return;
+   const canvas = canvasRef.current;
+   if (!canvas) return;
+   const ctx = canvas.getContext('2d');
+   const rect = canvas.getBoundingClientRect();
+   const x = e.type.includes('touch') ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+   const y = e.type.includes('touch') ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+   ctx.lineTo(x, y);
+   ctx.stroke();
+ };
+
+ const handleStopDrawing = () => {
+   setIsDrawing(false);
+ };
+
+ const clearSignature = () => {
+   const canvas = canvasRef.current;
+   if (!canvas) return;
+   const ctx = canvas.getContext('2d');
+   ctx.clearRect(0, 0, canvas.width, canvas.height);
+ };
+
+ const exportToPDF = () => {
+   window.print();
+ };
+
+ return (
+   <main className="container mx-auto p-4">
+     <div className="bg-blue-900 text-white p-8 mb-8 rounded-lg text-center">
+       <h1 className="text-4xl font-bold">שריקי</h1>
+       <div className="text-xl">יזמות ובניה בע"מ</div>
+     </div>
+
+     <div className="bg-white rounded-lg shadow p-6 mb-6">
+       <h2 className="text-2xl font-bold mb-4">בחירת דירה</h2>
+       <select 
+         value={selectedId}
+         onChange={(e) => setSelectedId(e.target.value)}
+         className="w-full p-2 border rounded mb-4"
+       >
+         <option value="">בחר דירה</option>
+         {apartments.map(apt => (
+           <option key={apt.id} value={apt.id}>
+             {`דירה ${apt.id} - קומה ${apt.floor} - ${apt.buyer1.name}${apt.buyer2 ? ' ו' + apt.buyer2.name : ''}`}
+           </option>
+         ))}
+       </select>
+
+       {selectedId && (
+         <div className="grid grid-cols-2 gap-4">
+           <div>
+             <label className="block mb-2">תאריך מסירה:</label>
+             <input
+               type="date"
+               value={formData.handoverDate}
+               onChange={(e) => setFormData({...formData, handoverDate: e.target.value})}
+               className="w-full p-2 border rounded"
+             />
+           </div>
+           <div>
+             <label className="block mb-2">תאריך אישור אכלוס:</label>
+             <input
+               type="date"
+               value={formData.approvalDate}
+               onChange={(e) => setFormData({...formData, approvalDate: e.target.value})}
+               className="w-full p-2 border rounded"
+             />
+           </div>
+           <div className="col-span-2">
+             <label className="block mb-2">כתובת:</label>
+             <input
+               type="text"
+               value={formData.address}
+               onChange={(e) => setFormData({...formData, address: e.target.value})}
+               className="w-full p-2 border rounded"
+             />
+           </div>
+         </div>
+       )}
+     </div>
+
+     {selectedApartment && (
+       <div className="bg-white rounded-lg shadow p-6">
+         <div className="space-y-6">
+           <div className="text-center font-bold text-xl">פרוטוקול מסירה</div>
+           
+           <div className="space-y-2">
+             <p>תאריך: {formData.handoverDate}</p>
+             <p>לכבוד</p>
+             <p>שריקי גרופ יזמות ובניה בע"מ</p>
+             <p>רחוב בעלי המלאכה 203</p>
+             <p>נתיבות</p>
+           </div>
+
+           <div>
+             <h3 className="font-bold text-lg mb-2">הנדון: אכלוס דירה בפרויקט "שריקי הילס צופים"</h3>
+             <p className="mb-4">
+               בהתאם להוראות חוזה המכר שנחתם בנינו לבין החברה ביום {selectedApartment.contract} 
+               אשר במסגרתו רכשנו את הזכויות בדירה מס' {selectedApartment.id} 
+               קומה מס' {selectedApartment.floor} בניין {selectedApartment.building}
+               (על פי התיאור בחוזה המכר)
+             </p>
+
+             <p className="mb-4">
+               פרויקט <strong>שריקי הילס צופים</strong> ברחוב: {formData.address}
+               (בהתאם לתיאור הדירה בעירייה) (להלן: "<strong>הדירה</strong>")
+             </p>
+
+             <p>
+               אנו, הח"מ {selectedApartment.buyer1.name} ת.ז. {selectedApartment.buyer1.id}
+               {selectedApartment.buyer2 ? ` ו${selectedApartment.buyer2.name} ת.ז. ${selectedApartment.buyer2.id}` : ''}
+             </p>
+           </div>
+
+           <p>
+             מאשרים בזאת כי ביום {formData.handoverDate} נמסרה לנו החזקה בדירה, 
+             לאחר שביום {formData.approvalDate} ניתן אישור לאכלוס הדירה.
+             המסירה כוללת את מפתחות הכניסה לדירה, מפתחות החדרים, מפתח דלת הכניסה לבניין, מפתח לתיבת הדואר.
+           </p>
+
+           <ol className="list-decimal pr-8 space-y-2">
+             <li>הננו מאשרים קבלת תעודות אחריות למערכות השונות בדירה.</li>
+             <li>הננו מאשרים כי בדקנו את הדירה במעמד חתימתנו על מסמך זה, וכי בבדיקתנו מצאנו כי הליקויים שפורטו בפרוטוקול המסירה המקדים תוקנו לשביעות רצוננו המלאה.</li>
+             <li>הננו מאשרים כי בדקנו את הפרטים הבאים ומצאנו אותם שלמים ותקינים:</li>
+           </ol>
+
+           <ul className="list-disc pr-12 space-y-2">
+             <li>כל אביזרי האינסטלציה לרבות: אסלות, כיורים, אמבטיות, אגניות ברזים, מושבי אסלה וכל יתר הפריטים הסניטריים בדירה.</li>
+             <li>אריחי הריצוף והחיפוי.</li>
+             <li>דלתות עץ ומתכת לרבות הידיות והמנעולים.</li>
+             <li>אביזרי החשמל לרבות: מפסקים, בתי תקע, לוח חשמל ובתי מנורות.</li>
+             <li>חלונות האלומיניום, ודלתות האלומיניום, לרבות השמשות המותקנות בהן, וחלקי הפרזול.</li>
+             <li>תריסים.</li>
+             <li>ארונות מטבח ומשטח העבודה במטבח.</li>
+             <li>קולטי שמש, ודוד חשמל.</li>
+           </ul>
+
+           <ol className="list-decimal pr-8 space-y-2" start="4">
+             <li>הננו מאשרים כי הדירה נמסרה לנו בהתאם להוראות ההסכם והמפרט הטכני שצורף לו.</li>
+             <li>הננו מאשרים כי קיבלנו את חוברת הוראות התחזוקה והשימוש בדירה.</li>
+             <li>אנו מצהירים בזאת, כי אנו מוותרים על כל טענה או דרישה או תביעה כנגד החברה.</li>
+             <li>אנו הח"מ מאשרים קבלת הפניה למועצה מקומית צופים ומתחייבים בזאת לשאת בהוצאות הארנונה החל ממועד מסירת החזקה בדירה.</li>
+           </ol>
+
+           <div className="mt-8 pt-4 border-t">
+             <p className="mb-4">בכבוד רב,</p>
+             
+             <div>
+               <canvas
+                 ref={canvasRef}
+                 width={400}
+                 height={200}
+                 className="border rounded bg-white"
+                 onMouseDown={handleStartDrawing}
+                 onMouseMove={handleDrawing}
+                 onMouseUp={handleStopDrawing}
+                 onMouseLeave={handleStopDrawing}
+                 onTouchStart={handleStartDrawing}
+                 onTouchMove={handleDrawing}
+                 onTouchEnd={handleStopDrawing}
+               />
+               
+               <div className="flex gap-4 mt-4">
+                 <button 
+                   onClick={clearSignature}
+                   className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                 >
+                   נקה חתימה
+                 </button>
+                 <button 
+                   onClick={exportToPDF}
+                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                 >
+                   ייצא לPDF
+                 </button>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     )}
+   </main>
+ );
+};
+
+export default DeliveryForm;
+<style jsx global>{`
+  @media print {
+    @page { margin: 2cm; }
+    .print\\:hidden { display: none !important; }
+    body { background: white; }
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .form-section {
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+`}</style>
+git init
+git add .
+git commit -m "Initial commit"
